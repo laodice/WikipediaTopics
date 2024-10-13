@@ -107,6 +107,8 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     testImplementation("androidx.test.ext:junit:1.2.1")
 
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.1")
+
     testImplementation("androidx.test.espresso:espresso-core:3.6.1")
 
     testImplementation("org.hamcrest:hamcrest:2.2")
