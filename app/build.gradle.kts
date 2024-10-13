@@ -94,11 +94,14 @@ dependencies {
     implementation("com.squareup.moshi:moshi-kotlin:1.15.0")
     implementation("com.squareup.retrofit2:converter-moshi:2.11.0")
 
+    /* Dependency Injection */
+    implementation(platform("io.insert-koin:koin-bom:4.0.0"))
+    implementation("io.insert-koin:koin-android")
+    implementation("io.insert-koin:koin-androidx-compose")
 
     /* Debug */
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
-
 
     /* Test */
     testImplementation("junit:junit:4.13.2")
@@ -112,4 +115,6 @@ dependencies {
 
     testImplementation(platform("androidx.compose:compose-bom:2023.08.00"))
     testImplementation("androidx.compose.ui:ui-test-junit4")
+
+    testImplementation("io.insert-koin:koin-test-junit4")
 }
