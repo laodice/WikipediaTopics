@@ -1,8 +1,11 @@
 package com.example.wikipediatopics
 
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
+import androidx.compose.ui.test.hasAnyChild
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onChild
@@ -57,7 +60,7 @@ class MainActivityTests : KoinTest {
     @Test
     fun `Should display a search bar`() {
         every { viewModel.query } returns MutableStateFlow("value").asStateFlow()
-        every { viewModel.isSearching } returns MutableStateFlow(false).asStateFlow()
+        every { viewModel.isSearching } returns MutableStateFlow(true).asStateFlow()
 
         with(composeRule) {
             setContent { App() }
@@ -111,6 +114,21 @@ class MainActivityTests : KoinTest {
                 assertCountEquals(1)
                 onFirst().assertExists()
             }
+        }
+    }
+
+    @Test
+    fun `Should display a placeholder text when query is empty`() {
+        every { viewModel.query } returns MutableStateFlow("").asStateFlow()
+        every { viewModel.isSearching } returns MutableStateFlow(true).asStateFlow()
+        every { viewModel.wikiPage } returns MutableStateFlow(null).asStateFlow()
+
+        with(composeRule) {
+            setContent { App() }
+
+            onNodeWithTag(TEST_TAG_SEARCH_BAR).assert(
+                hasAnyChild(hasText("Search", substring = true)),
+            )
         }
     }
 

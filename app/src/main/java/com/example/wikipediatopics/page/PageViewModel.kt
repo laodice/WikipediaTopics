@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 class PageViewModel(
     private val repository: PageRepository,
 ) : ViewModel() {
-    private val _isSearching = MutableStateFlow(false)
+    private val _isSearching = MutableStateFlow(true)
     val isSearching = _isSearching.asStateFlow()
 
     private val _query = MutableStateFlow("")

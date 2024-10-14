@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Wikipedia Topics</string>
+    <string name="wiki_search_bar_placeholder">Search Wikipedia (case sensitive)</string>
     <string name="wiki_page_query_occurrences">%1$s appears %2$d time(s) in the text</string>
 </resources>
