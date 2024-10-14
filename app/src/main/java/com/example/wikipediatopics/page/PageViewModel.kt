@@ -16,6 +16,9 @@ class PageViewModel(
     private val _query = MutableStateFlow("")
     val query = _query.asStateFlow()
 
+    private val _wikiPage: MutableStateFlow<WikipediaPage?> = MutableStateFlow(null)
+    val wikiPage = _wikiPage.asStateFlow()
+
     fun onQueryChange(text: String) {
         _query.value = text
     }
@@ -35,7 +38,7 @@ class PageViewModel(
     private fun searchTopic(newTopic: String) {
         viewModelScope.launch {
             repository.fetchPageForTopic(newTopic).fold(
-                onSuccess = { page: WikipediaPage -> println("LAO10: got page: ${page.title}") },
+                onSuccess = { page: WikipediaPage -> _wikiPage.value = page },
                 onFailure = { exception -> println("LAO10: There's been an issue that should be handled: $exception") },
             )
         }

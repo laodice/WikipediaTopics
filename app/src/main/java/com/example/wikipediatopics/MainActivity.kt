@@ -1,6 +1,8 @@
 package com.example.wikipediatopics
 
 import android.os.Bundle
+import android.view.ViewGroup
+import android.webkit.WebView
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
 import com.example.wikipediatopics.page.PageViewModel
 import com.example.wikipediatopics.ui.theme.WikipediaTopicsTheme
 import org.koin.androidx.compose.koinViewModel
@@ -38,6 +41,7 @@ class MainActivity : ComponentActivity() {
 fun App(viewModel: PageViewModel = koinViewModel()) {
     val query by viewModel.query.collectAsState()
     val isSearching by viewModel.isSearching.collectAsState()
+    val wikiPage by viewModel.wikiPage.collectAsState()
 
     SearchBar(
         query = query,
@@ -51,7 +55,23 @@ fun App(viewModel: PageViewModel = koinViewModel()) {
                 .padding(16.dp)
                 .testTag(TEST_TAG_SEARCH_BAR),
     ) {
-        Text(text = query)
+        wikiPage?.let { page ->
+            Text(text = page.title)
+            AndroidView(
+                factory = { viewContext ->
+                    WebView(viewContext).apply {
+                        layoutParams =
+                            ViewGroup.LayoutParams(
+                                ViewGroup.LayoutParams.MATCH_PARENT,
+                                ViewGroup.LayoutParams.WRAP_CONTENT,
+                            )
+                    }
+                },
+                update = { webView ->
+                    webView.loadDataWithBaseURL(null, page.text.htmlDump, "text/html", "utf-8", null)
+                },
+            )
+        }
     }
 }
 
