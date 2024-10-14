@@ -63,4 +63,17 @@ class PageViewModelTests {
             assertThat(viewModel.query.first(), `is`("topic"))
             coVerify(exactly = 1) { repository.fetchPageForTopic(any()) }
         }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `Should not search for the topic when search is triggered if the query is blank`() =
+        runTest {
+            coEvery { repository.fetchPageForTopic(any()) } returns Result.success(mockk(relaxed = true))
+
+            viewModel.onSearch("")
+
+            advanceUntilIdle()
+            assertThat(viewModel.query.first(), `is`(""))
+            coVerify(exactly = 0) { repository.fetchPageForTopic(any()) }
+        }
 }

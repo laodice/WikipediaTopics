@@ -36,6 +36,7 @@ class PageViewModel(
     }
 
     private fun searchTopic(newTopic: String) {
+        if (newTopic.isBlank()) return
         viewModelScope.launch {
             repository.fetchPageForTopic(newTopic).fold(
                 onSuccess = { page: WikipediaPage -> _wikiPage.value = page },
