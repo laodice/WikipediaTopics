@@ -2,6 +2,8 @@ package com.example.wikipediatopics.page
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.wikipediatopics.api.Failure
+import com.example.wikipediatopics.api.Success
 import com.example.wikipediatopics.api.WikipediaPage
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -38,10 +40,10 @@ class PageViewModel(
     private fun searchTopic(newTopic: String) {
         if (newTopic.isBlank()) return
         viewModelScope.launch {
-            repository.fetchPageForTopic(newTopic).fold(
-                onSuccess = { page: WikipediaPage -> _wikiPage.value = page },
-                onFailure = { exception -> println("LAO10: There's been an issue that should be handled: $exception") },
-            )
+            when (val result = repository.fetchPageForTopic(newTopic)) {
+                is Success -> _wikiPage.value = result.value
+                is Failure -> println("There's been an issue that should be handled: ${result.error} | ${result.msg}")
+            }
         }
     }
 }

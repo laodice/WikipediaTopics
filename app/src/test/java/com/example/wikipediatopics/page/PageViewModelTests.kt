@@ -1,6 +1,7 @@
 package com.example.wikipediatopics.page
 
 import com.example.wikipediatopics.MainCoroutineRule
+import com.example.wikipediatopics.api.Success
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -55,7 +56,7 @@ class PageViewModelTests {
     @Test
     fun `Should search for the topic when search is triggered`() =
         runTest {
-            coEvery { repository.fetchPageForTopic(any()) } returns Result.success(mockk(relaxed = true))
+            coEvery { repository.fetchPageForTopic(any()) } returns Success(mockk(relaxed = true))
 
             viewModel.onSearch("topic")
 
@@ -68,7 +69,7 @@ class PageViewModelTests {
     @Test
     fun `Should not search for the topic when search is triggered if the query is blank`() =
         runTest {
-            coEvery { repository.fetchPageForTopic(any()) } returns Result.success(mockk(relaxed = true))
+            coEvery { repository.fetchPageForTopic(any()) } returns Success(mockk(relaxed = true))
 
             viewModel.onSearch("")
 
