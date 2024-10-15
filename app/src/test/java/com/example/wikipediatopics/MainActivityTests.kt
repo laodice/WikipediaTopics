@@ -28,8 +28,8 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.koin.core.context.loadKoinModules
-import org.koin.core.context.unloadKoinModules
+import org.koin.core.context.startKoin
+import org.koin.core.context.stopKoin
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 import org.koin.test.KoinTest
@@ -42,25 +42,29 @@ class MainActivityTests : KoinTest {
     val composeRule = createComposeRule()
 
     private val viewModel = mockk<PageViewModel>(relaxed = true)
-    private val module =
-        module {
-            viewModel { viewModel }
-        }
 
     @Before
     fun setup() {
-        loadKoinModules(module)
+        stopKoin()
+        startKoin {
+            modules(
+                module {
+                    viewModel { viewModel }
+                },
+            )
+        }
     }
 
     @After
     fun tearDown() {
-        unloadKoinModules(module)
+        stopKoin()
     }
 
     @Test
     fun `Should display a search bar`() {
         every { viewModel.query } returns MutableStateFlow("value").asStateFlow()
         every { viewModel.isSearching } returns MutableStateFlow(true).asStateFlow()
+        every { viewModel.wikiPage } returns MutableStateFlow(null).asStateFlow()
 
         with(composeRule) {
             setContent { App() }
