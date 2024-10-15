@@ -17,7 +17,7 @@ class PageRepository(
                 val result = api.getPage(topic).parse
                 Success(result)
             } catch (e: Exception) {
-                Failure(e.cause, e.message)
+                Failure(e)
             }
         }
 }

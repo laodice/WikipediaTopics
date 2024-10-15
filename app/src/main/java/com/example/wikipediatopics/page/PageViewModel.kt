@@ -21,6 +21,9 @@ class PageViewModel(
     private val _wikiPage: MutableStateFlow<WikipediaPage?> = MutableStateFlow(null)
     val wikiPage = _wikiPage.asStateFlow()
 
+    private val _displayFailureMsg: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val displayFailureMsg = _displayFailureMsg.asStateFlow()
+
     fun onQueryChange(text: String) {
         _query.value = text
     }
@@ -42,8 +45,14 @@ class PageViewModel(
         viewModelScope.launch {
             when (val result = repository.fetchPageForTopic(newTopic)) {
                 is Success -> _wikiPage.value = result.value
-                is Failure -> println("There's been an issue that should be handled: ${result.error} | ${result.msg}")
+                is Failure -> handleFailure(result.exception)
             }
         }
+    }
+
+    private fun handleFailure(e: Exception) {
+        _wikiPage.value = null
+        _displayFailureMsg.value = true
+        // FirebaseCrashlytics.getInstance().recordException(e)
     }
 }

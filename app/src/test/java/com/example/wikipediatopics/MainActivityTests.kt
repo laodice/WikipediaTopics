@@ -41,7 +41,13 @@ class MainActivityTests : KoinTest {
     @get:Rule
     val composeRule = createComposeRule()
 
-    private val viewModel = mockk<PageViewModel>(relaxed = true)
+    private val viewModel =
+        mockk<PageViewModel>(relaxed = true) {
+            every { query } returns MutableStateFlow("").asStateFlow()
+            every { wikiPage } returns MutableStateFlow(null).asStateFlow()
+            every { isSearching } returns MutableStateFlow(true).asStateFlow()
+            every { displayFailureMsg } returns MutableStateFlow(false).asStateFlow()
+        }
 
     @Before
     fun setup() {
@@ -63,8 +69,6 @@ class MainActivityTests : KoinTest {
     @Test
     fun `Should display a search bar`() {
         every { viewModel.query } returns MutableStateFlow("value").asStateFlow()
-        every { viewModel.isSearching } returns MutableStateFlow(true).asStateFlow()
-        every { viewModel.wikiPage } returns MutableStateFlow(null).asStateFlow()
 
         with(composeRule) {
             setContent { App() }
@@ -80,8 +84,6 @@ class MainActivityTests : KoinTest {
     @Test
     fun `Entering a topic and clicking enter should start a search`() {
         every { viewModel.query } returns MutableStateFlow("Query").asStateFlow()
-        every { viewModel.isSearching } returns MutableStateFlow(true).asStateFlow()
-        every { viewModel.wikiPage } returns MutableStateFlow(null).asStateFlow()
 
         with(composeRule) {
             setContent { App() }
@@ -97,7 +99,6 @@ class MainActivityTests : KoinTest {
     @Test
     fun `Should display wikipedia page and number of occurrences when searching for a topic`() {
         every { viewModel.query } returns MutableStateFlow("value").asStateFlow()
-        every { viewModel.isSearching } returns MutableStateFlow(true).asStateFlow()
         every { viewModel.wikiPage } returns
             MutableStateFlow(
                 WikipediaPage(
@@ -122,10 +123,33 @@ class MainActivityTests : KoinTest {
     }
 
     @Test
+    fun `Should display an error message`() {
+        every { viewModel.displayFailureMsg } returns MutableStateFlow(true).asStateFlow()
+
+        with(composeRule) {
+            setContent { App() }
+
+            onAllNodesWithTag(TEST_TAG_ERROR_MSG).apply {
+                assertCountEquals(1)
+                onFirst().assertIsDisplayed()
+            }
+        }
+    }
+
+    @Test
+    fun `Should not display an error message`() {
+        every { viewModel.displayFailureMsg } returns MutableStateFlow(false).asStateFlow()
+
+        with(composeRule) {
+            setContent { App() }
+
+            onAllNodesWithTag(TEST_TAG_ERROR_MSG).assertCountEquals(0)
+        }
+    }
+
+    @Test
     fun `Should display a placeholder text when query is empty`() {
         every { viewModel.query } returns MutableStateFlow("").asStateFlow()
-        every { viewModel.isSearching } returns MutableStateFlow(true).asStateFlow()
-        every { viewModel.wikiPage } returns MutableStateFlow(null).asStateFlow()
 
         with(composeRule) {
             setContent { App() }

@@ -31,6 +31,7 @@ const val TEST_TAG_SEARCH_BAR = "TEST_TAG_SEARCH_BAR"
 const val TEST_TAG_SEARCH_BAR_PLACEHOLDER = "TEST_TAG_SEARCH_BAR_PLACEHOLDER"
 const val TEST_TAG_QUERY_OCCURRENCES = "TEST_TAG_QUERY_OCCURRENCES"
 const val TEST_TAG_WEB_PAGE = "TEST_TAG_WEB_PAGE"
+const val TEST_TAG_ERROR_MSG = "TEST_TAG_ERROR_MSG"
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,10 +57,6 @@ fun App(viewModel: PageViewModel = koinViewModel()) {
     val isSearching by viewModel.isSearching.collectAsState()
     val wikiPage by viewModel.wikiPage.collectAsState()
 
-    val queryOccurrences by derivedStateOf {
-        wikiPage?.text?.htmlDump?.countOccurrencesOf(query) ?: 0
-    }
-
     SearchBar(
         query = query,
         onQueryChange = viewModel::onQueryChange,
@@ -73,6 +70,9 @@ fun App(viewModel: PageViewModel = koinViewModel()) {
                 .testTag(TEST_TAG_SEARCH_BAR),
     ) {
         wikiPage?.let { page ->
+            val queryOccurrences by derivedStateOf {
+                wikiPage?.text?.htmlDump?.countOccurrencesOf(query) ?: 0
+            }
             Text(
                 stringResource(id = R.string.wiki_page_query_occurrences, page.title, queryOccurrences),
                 modifier = Modifier.testTag(TEST_TAG_QUERY_OCCURRENCES),
@@ -91,6 +91,14 @@ fun App(viewModel: PageViewModel = koinViewModel()) {
                 update = { webView ->
                     webView.loadDataWithBaseURL(null, page.text.htmlDump, "text/html", "utf-8", null)
                 },
+            )
+        }
+
+        val displayFailureMsg by viewModel.displayFailureMsg.collectAsState()
+        if (displayFailureMsg) {
+            Text(
+                text = stringResource(id = R.string.wiki_page_error_msg),
+                modifier = Modifier.testTag(TEST_TAG_ERROR_MSG),
             )
         }
     }
