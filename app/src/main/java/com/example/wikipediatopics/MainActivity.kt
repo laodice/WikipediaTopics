@@ -18,6 +18,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
@@ -109,6 +110,7 @@ fun SearchPlaceholder() {
     Text(
         text = stringResource(id = R.string.wiki_search_bar_placeholder),
         textDecoration = TextDecoration.Underline,
+        color = Color.Gray,
         modifier = Modifier.testTag(TEST_TAG_SEARCH_BAR_PLACEHOLDER),
     )
 }
